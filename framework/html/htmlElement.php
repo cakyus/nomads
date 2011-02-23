@@ -18,8 +18,27 @@ class htmlElement {
 		unset($this->children);
 	}
 	
+	public function createElement($tagName) {
+		$htmlElement = new htmlElement;
+		$htmlElement->tagName = $tagName;
+		return $htmlElement;
+	}
+	
+	
 	public function appendChild($child) {
 		$this->children->append($child);
+	}
+	
+	public function loadHTML() {
+		
+	}
+	
+	public function saveHTML() {
+		
+	}
+	
+	public function saveXML() {
+		
 	}
 	
 	public function __toString() {

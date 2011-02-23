@@ -9,6 +9,7 @@ class developerController {
 		 **/
 		
 		$schema = new databaseSchema;
+		$htmlDocument = new htmlDocument;
 		$htmlTable = new htmlTable;
 
 		$htmlTable->headers->add('Name');
@@ -18,6 +19,9 @@ class developerController {
 			$row->add($table->name);
 		}
 		
-		echo $htmlTable;
+		$htmlDocument->body->appendChild($htmlTable);
+		$htmlDocument->title = 'Untitled';
+		
+		echo $htmlDocument->saveHTML();
 	}
 }
