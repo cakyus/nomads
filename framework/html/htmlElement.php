@@ -18,6 +18,10 @@ class htmlElement {
 		unset($this->children);
 	}
 	
+	public function setAttribute($name, $value) {
+		$this->attributes->set($name, $value);
+	}
+	
 	public function createElement($tagName) {
 		$htmlElement = new htmlElement;
 		$htmlElement->tagName = $tagName;

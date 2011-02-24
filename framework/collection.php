@@ -53,6 +53,28 @@ class collection implements Iterator {
     
     public function remove($keyword) {
         
+		for ($i=0; $i<count($this->keywords); $i++) {
+			if ($this->keywords[$i] == $keyword) {
+				unset($this->keywords[$i]);
+				unset($this->values[$i]);
+				return true;
+			}
+		}
+		
+		return false;
+    }
+	
+    public function set($keyword, $value) {
+        
+		for ($i=0; $i<count($this->keywords); $i++) {
+			if ($this->keywords[$i] == $keyword) {
+				$this->values[$i] = $value;
+				return true;
+			}
+		}
+		
+		$this->append($value, $keyword);
+		return false;
     }
 	
 	public function item($keyword) {

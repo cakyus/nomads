@@ -24,11 +24,37 @@ class url {
     public function __construct() {
         $this->queries = array();
     }
-
-    public function getCurrentUrl() {}
-    public function getLocalUrl($className, $functionName) {}
-
-    public function getUrl($url) {
+    public function getCurrentUrl() {
+        
+        if ($protocol = strstr($_SERVER['SERVER_PROTOCOL'],'/',true)) {
+            $this->setProtocal(strtolower($protocol));
+        }
+        
+        if (isset($_SERVER['HTTP_HOST'])) {
+            $components = explode(':',$_SERVER['HTTP_HOST']);
+            $this->setHost($components[0]);
+            $this->setPort($components[1]);
+        } else {
+            $this->setHost($_SERVER['SERVER_NAME']);
+            $this->setPort($_SERVER['SERVER_PORT']);
+        }
+        
+        $this->setPath($_SERVER['REQUEST_URI']);
+        $this->setQueryString($_SERVER['QUERY_STRING']);
+        $this->setFragment('');
+        
+        return $this->getUrl();
+    }
+    public function getLocalUrl($className, $functionName) {
+        $this->getCurrentUrl();
+        $this->setQueryString('');
+        $this->setFragment('');
+        $this->setQuery('c',$className);
+        $this->setQuery('f',$functionName);
+        $this->buildUrl();
+        return $this->getUrl();
+    }
+    public function getUrl() {
         return $this->url;
     }
     public function getProtocal($string) {
@@ -99,7 +125,7 @@ class url {
         return $this->buildUrl();
     }
     public function setQuery($name, $value) {
-        $this->protocol = $string;
+        $this->queries[$name] = $value;
         $this->buildQueryString();
         return $this->buildUrl();
     }
@@ -140,7 +166,7 @@ class url {
     }
     
     private function buildQueryString() {
-        $this->querystring = http_build_query($this->queries):
+        $this->querystring = http_build_query($this->queries);
     }
     
     private function buildUrl() {
