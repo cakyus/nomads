@@ -17,6 +17,8 @@ class developerController {
 		foreach($schema->getTables() as $table) {
 			$row = $htmlTable->rows->add();
 			$row->add($table->name);
+			$row->add('structure');
+			$row->add('data');
 		}
 		
 		$htmlDocument->body->appendChild($htmlTable);
