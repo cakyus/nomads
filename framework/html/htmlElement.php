@@ -55,7 +55,7 @@ class htmlElement {
 		$output = '<'.$this->tagName;
 		
 		foreach($this->attributes as $name => $value) {
-			$output .= ' '.$name.'='.htmlentities($value);
+			$output .= ' '.$name.'="'.htmlentities($value).'"';
 		}
 		
 		if ($this->children->count()) {

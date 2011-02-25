@@ -20,6 +20,18 @@ class htmlDocument {
 		unset($this->body);
 	}
 	
+	public function addStyleUrl($url) {
+		
+		$htmlElement = new htmlElement;
+		
+		$htmlElement->tagName = 'link';
+		$htmlElement->setAttribute('rel','stylesheet');
+		$htmlElement->setAttribute('href',$url);
+		$htmlElement->setAttribute('type','text/css');
+		
+		$this->head->appendChild($htmlElement);
+	}
+	
 	public function getElementById($id) {
 		
 	}
