@@ -6,7 +6,17 @@ class Nomads_Text {
 		
 	}
 	
-	public function newGUID() {
+    // generate global unique id
+    // this should be able to use when merge data from two independent server
+	 
+	public function getGUID() {
+		return str_replace(array("{", "-", "}"), "", com_create_guid());
+	}
+	
+    // generate unique id
+    // use only in a server
+	 
+	public function getUniqId() {
 		return str_replace(array("{", "-", "}"), "", com_create_guid());
 	}
 	
