@@ -6,6 +6,13 @@ class Nomads_Theme {
 	private $title;
 	private $pageTitle;
 	private $content;
+	private $styles;
+	private $scripts;
+	
+	public function __construct() {
+	    $this->styles = array();
+	    $this->scripts = array();
+	}
 
 	public function setTitle($title) {
 		$this->title = $title;
@@ -14,6 +21,14 @@ class Nomads_Theme {
 	public function setPageTitle($pageTitle) {
 		$this->pageTitle = $pageTitle;
 	}
+	
+	public function addStyle($URL) {
+	    $this->styles[] = $URL;
+	}
+
+	public function addScript($URL) {
+	    $this->scripts[] = $URL;
+	}
 
 	public function add($string) {
 		$this->content .= $string;
@@ -21,23 +36,26 @@ class Nomads_Theme {
 
 	public function write() {
 		
-		if (empty($this->pageTitle)) {
-			$this->pageTitle = $this->title;
-			
-		}
-		
 		echo '<html><head>';
 		echo '<title>'.$this->title.'</title>';
 		
-		echo '<style>'
-			.'body { background-color: #000; color: #fff; }'
-			.'body { font-family: georgia; }'
-			.'</style>';
+		// styles
+		foreach ($this->styles as $style) {
+		    echo '<link rel="stylesheet" href="'.$style.'" type="text/css" />';    
+        }
+		// scripts
+		foreach ($this->scripts as $script) {
+		    echo '<script src="'.$script.'"></script>';    
+        }
+        
+		echo '</head><body><center><div id="theme">';
 		
-		echo '</head><body>';
-		echo '<h1>'.$this->pageTitle.'</h1>';
+		if (empty($this->pageTitle) == false) {
+    		echo '<h1>'.$this->pageTitle.'</h1>';
+		}
+		
 		echo $this->content;
-		echo '</body></html>';
+		echo '</div></center></body></html>';
 	}
 }
 
