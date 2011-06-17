@@ -60,4 +60,14 @@ class Nomads_File {
 	public function getContent() {
 	    return file_get_contents($this->path);
 	}
+	
+	public function getURL() {
+	    if (substr($this->path,0,strlen($_SERVER['DOCUMENT_ROOT']))
+    	        == $_SERVER['DOCUMENT_ROOT']) {
+            return substr($this->path,strlen($_SERVER['DOCUMENT_ROOT']));
+        }
+	}
 }
+
+
+
