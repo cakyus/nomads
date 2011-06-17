@@ -32,8 +32,20 @@ class Nomads_Request {
 	public function count() {
 		return count($this->properties);
 	}
+	
+	public function get($name) {
+        if (isset($this->properties[$name])) {
+            return $this->properties[$name];
+        } else {
+            return null;
+        }
+	}
     
     public function __get($name) {
+		
+		// magic function is too slow
+		trigger_error('Depreciated', E_USER_DEPRECATED);
+		
         if (isset($this->properties[$name])) {
             return $this->properties[$name];
         } else {
