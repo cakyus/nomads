@@ -61,18 +61,24 @@ class Nomads_Folder {
 			$path .= '/';
 		}
 		
+		$filePaths = array();
 		while (($file = readdir($dh)) !== false) {
 			$filePath = $path.$file;
 #			echo $filePath."\n";
 			if (is_file($filePath)) {
 #    			echo $filePath."\n";
-				$Nomads_File = new Nomads_File;
-				$Nomads_File->open($filePath);
-				$files[] = $Nomads_File;
+                $filePaths[] = $filePath;
 			}
 		}
 		
 		closedir($dh);
+		
+		sort($filePaths);		
+		foreach ($filePaths as $filePath) {
+			$Nomads_File = new Nomads_File;
+			$Nomads_File->open($filePath);
+			$files[] = $Nomads_File;
+        }
 		
 	    return $files;
 	}
