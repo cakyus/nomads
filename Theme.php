@@ -35,17 +35,23 @@ class Nomads_Theme {
 	}
 
 	public function write() {
+	
+		$config = new Nomads_Config;
 		
 		echo '<html><head>';
 		echo '<title>'.$this->title.'</title>';
 		
+		$storageURL = $config->get('Nomads_Storage_URL');
+		
 		// styles
 		foreach ($this->styles as $style) {
-		    echo '<link rel="stylesheet" href="'.$style.'" type="text/css" />';    
+		    echo '<link rel="stylesheet" type="text/css"'
+		    	.' href="'.$storageURL.'/'.$style.'"'
+		    	.' />';    
         }
 		// scripts
 		foreach ($this->scripts as $script) {
-		    echo '<script src="'.$script.'"></script>';    
+		    echo '<script src="'.$storageURL.'/'.$script.'"></script>';    
         }
         
 		echo '</head><body><center><div id="theme">';
