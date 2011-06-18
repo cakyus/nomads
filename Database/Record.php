@@ -24,24 +24,17 @@ class Nomads_Database_Record {
 	/**
 	 * search database based on primary key
 	 * no property in this class should be changed
-	 * @return System_Database_Record
 	 **/
 	
-	public function seek($indexName='PRIMARY') {
+	public function seek() {
+	
+		$record = clone $this;
 		
-		$record = new System_Database_Record;
-		$record->open($this->properties->schema->name);
-		$index = $this->properties->schema->getIndex($indexName);
-		foreach ($index->fields as $field) {
-			$fieldName = $field->name;
-			$record->{$fieldName} = $this->{$fieldName};
+		if ($record->get()) {
+			return $record;
 		}
 		
-		if ($record->get($indexName) == false) {
-			return false;
-		}
-		
-		return $record;
+		return false;
 	}
 	
 	/**
@@ -56,29 +49,26 @@ class Nomads_Database_Record {
 		$database = new Nomads_Database;
 		
 		$command = $this->getCommandPut();
-		echo "$command\n"; die();
+#		echo "$command\n"; die();
 		
 		if (!$database->exec($command)) {
 			return false;
 		}
 		
-		// insertid
-		$field = $this->properties->schema->getFieldAutoIncrement();
+		// update insertid for autoIncrement field
+		if ($field = $this->_table->getFieldAutoIncrement()) {
+			$this->{$field->name} = $database->getInsertId();
+		}
 		
 		return true;
 	}
 	
-	/**
-	 * get record from database
-	 **/
-	
-	public function get($indexName='PRIMARY') {
+	public function get() {
 		
-		$database = new System_Database;
-		$command = new System_Database_Command;
+		$database = new Nomads_Database;
 		
-		$command->selectIndex($this, $indexName);
-		//echo($command); exit();
+		$command = $this->getCommandGet();
+#		echo($command); exit();
 		
 		$query = $database->query($command);
 		
@@ -95,40 +85,21 @@ class Nomads_Database_Record {
 	
 	public function del() {
 		
-		$database = new System_Database;
-		$command = new System_Database_Command;
+		$database = new Nomads_Database;
 		
-		$command->delete($this);
-		//echo($command); exit();
+		$command = $this->getCommandDel();
 		
-		if (!$database->exec($command)) {
-			return false;
-		}
-		
-		return true;
+		return $database->exec($command);
 	}
 	
 	public function set() {
 		
-		$database = new System_Database;
-		$command = new System_Database_Command;
+		$database = new Nomads_Database;
 		
-		$command->update($this);
-		//echo($command); exit();
+		$command = $this->getCommandSet();
+#		echo "$command\n"; die();
 		
-		if (!$database->exec($command)) {
-			return false;
-		}
-		
-		return true;
-	}
-	
-	/**
-	 * @return System_Database_Record_Properties
-	 **/
-	
-	public function getProperties() {
-		return $this->properties;
+		return $database->exec($command);
 	}
 	
 	private function getCommandPut() {
@@ -155,7 +126,9 @@ class Nomads_Database_Record {
 			if (	$field->name == 'timeCreate'
 				||	$field->name == 'timeUpdate'
 				) {
-				$fieldValues[] = time();
+				$time = time();
+				$fieldValues[] = $time;
+				$this->{$field->name} = $time;
 			} elseif ($field->isTypeString()) {
 				$fieldValues[] = $database->quote($this->{$field->name});
 			} else {
@@ -167,5 +140,89 @@ class Nomads_Database_Record {
 		$command .= ' VALUES ('.implode(',',$fieldValues).')';
 		
 		return $command;
+	}
+	
+	private function getCommandSet() {
+	
+		$database = new Nomads_Database;
+	
+		$command = 'UPDATE `'.$this->_table->name.'` SET ';
+		
+		// autoincrement field is not included
+		// @assumption there is only one autoincrement field in a table
+		// @assumption there is more than one field which not autoincrement
+		
+		$fieldCommands = array();
+		$fieldPrimaryKeyFieldNames = $this->_table->getIndexPrimaryKeyFieldNames();
+#		print_r($fieldPrimaryKeyFieldNames);
+		
+		foreach ($this->_table->fields as $field) {
+			// exclude primary key fields
+			if (in_array($field->name, $fieldPrimaryKeyFieldNames)) {
+				continue;
+			} elseif ($field->name == 'timeCreate') {
+				continue;
+			}
+			
+			$fieldCommand = '`'.$field->name.'` = ';
+			
+			// @assumption special field names are: timeCreate, timeUpdate
+			if ($field->name == 'timeUpdate') {
+				$time = time();
+				$fieldCommand .= $time;
+				$this->{$field->name} = $time;
+			} elseif ($field->isTypeString()) {
+				$fieldCommand .= $database->quote($this->{$field->name});
+			} else {
+				$fieldCommand .= $this->{$field->name};
+			}
+			
+			$fieldCommands[] = $fieldCommand;
+		}
+		
+		$command .= implode(',',$fieldCommands);
+		$command .= $this->getCommandWherePrimaryKey();
+		
+		return $command;
+	}
+	
+	private function getCommandDel() {
+	
+		$command = 'DELETE FROM `'.$this->_table->name.'` ';
+		$command .= $this->getCommandWherePrimaryKey();
+		
+		return $command;
+	}
+	
+	private function getCommandGet() {
+	
+		$command = 'SELECT * FROM `'.$this->_table->name.'` ';
+		$command .= $this->getCommandWherePrimaryKey();
+		
+		return $command;
+	}
+	
+	private function getCommandWherePrimaryKey() {
+	
+		$database = new Nomads_Database;
+		
+		$index = $this->_table->getIndexPrimaryKey();
+		$fieldCommands = array();
+		
+		foreach ($index->fields as $field) {
+			$fieldCommand = '`'.$field->name.'` = ';
+			if ($field->isTypeString()) {
+				$fieldCommand .= $database->quote($this->{$field->name});
+			} else {
+				$fieldCommand .= $this->{$field->name};
+			}
+			$fieldCommands[] = $fieldCommand;
+		}
+		
+		if (empty($fieldCommands)) {
+			trigger_error('table "'.$this->_table->name.'" has no primary key');
+		}
+		
+		return ' WHERE '.implode(',', $fieldCommands);
 	}
 }
