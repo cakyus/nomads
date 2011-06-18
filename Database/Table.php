@@ -111,6 +111,19 @@ class Nomads_Database_Table {
 		return null;
 	}
 	
+	public function getIndexPrimaryKeyFieldNames() {
+		
+		$fieldNames = array();
+		
+		if ($index = $this->getIndexPrimaryKey()) {
+			foreach ($index->fields as $field) {
+				$fieldNames[] = $field->name;
+			}
+		}
+		
+		return $fieldNames;
+	}
+	
 	public function getFieldAutoIncrement() {
 		foreach ($this->fields as $field) {
 			if ($field->autoIncrement) {
