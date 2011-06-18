@@ -70,5 +70,9 @@ class Nomads_Database {
 		}
 		return false;
 	}
+	
+	public function getInsertId() {
+		return mysql_insert_id($this->handle);
+	}
 }
 
