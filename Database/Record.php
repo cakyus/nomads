@@ -9,6 +9,10 @@ class Nomads_Database_Record {
 	
 	private $_table;
 	
+	public function __construct() {
+		
+	}
+	
 	public function __destruct() {
 		unset($this->_table);
 	}
@@ -122,14 +126,7 @@ class Nomads_Database_Record {
 			
 			$fieldNames[] = '`'.$field->name.'`';
 			
-			// @assumption special field names are: timeCrate, timeUpdate
-			if (	$field->name == 'timeCreate'
-				||	$field->name == 'timeUpdate'
-				) {
-				$time = time();
-				$fieldValues[] = $time;
-				$this->{$field->name} = $time;
-			} elseif ($field->isTypeString()) {
+			if ($field->isTypeString()) {
 				$fieldValues[] = $database->quote($this->{$field->name});
 			} else {
 				$fieldValues[] = $this->{$field->name};
@@ -160,18 +157,11 @@ class Nomads_Database_Record {
 			// exclude primary key fields
 			if (in_array($field->name, $fieldPrimaryKeyFieldNames)) {
 				continue;
-			} elseif ($field->name == 'timeCreate') {
-				continue;
 			}
 			
 			$fieldCommand = '`'.$field->name.'` = ';
 			
-			// @assumption special field names are: timeCreate, timeUpdate
-			if ($field->name == 'timeUpdate') {
-				$time = time();
-				$fieldCommand .= $time;
-				$this->{$field->name} = $time;
-			} elseif ($field->isTypeString()) {
+			if ($field->isTypeString()) {
 				$fieldCommand .= $database->quote($this->{$field->name});
 			} else {
 				$fieldCommand .= $this->{$field->name};
