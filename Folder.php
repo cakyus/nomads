@@ -44,6 +44,41 @@ class Nomads_Folder {
 	
 	public function getFolders() {
 	    
+	    $folders = array();
+	    
+		$path = $this->path;
+		$path = str_replace('\\','/',$path);
+		
+		if (!$dh = opendir($path)) {
+			return false;
+		}
+		
+		if (substr($path,-1) != '/') {
+			$path .= '/';
+		}
+		
+		$folderPaths = array();
+		while (($file = readdir($dh)) !== false) {
+			$folderPath = $path.$file;
+#			echo $filePath."\n";
+			if ($file == '.' || $file == '..') {
+				// do nothing
+			} elseif (is_dir($folderPath)) {
+#    			echo $filePath."\n";
+                $folderPaths[] = $folderPath;
+			}
+		}
+		
+		closedir($dh);
+		
+		sort($folderPaths);		
+		foreach ($folderPaths as $folderPath) {
+			$Nomads_Folder = new Nomads_Folder;
+			$Nomads_Folder->open($folderPath);
+			$folders[] = $Nomads_Folder;
+        }
+		
+	    return $folders;
 	}
 	
 	public function getFiles() {
