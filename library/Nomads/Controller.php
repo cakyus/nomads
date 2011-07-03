@@ -9,9 +9,5 @@ class Nomads_Controller {
 	public function __construct () {
 		
 	}
-	
-	public function view($viewName) {
-	
-	}
 }
 
