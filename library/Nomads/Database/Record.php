@@ -101,7 +101,7 @@ class Nomads_Database_Record {
 		$database = new Nomads_Database;
 		
 		$command = $this->getCommandSet();
-#		echo "$command\n"; die();
+		//echo "$command\n"; die();
 		
 		return $database->exec($command);
 	}
