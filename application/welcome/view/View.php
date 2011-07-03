@@ -1,21 +1,19 @@
 <?php
 
 /**
- * ClassName
+ * Welcome_View
  *
  * @package packageName
  *
  **/
 
-class ClassName extends AnotherClass {
+class Welcome_View extends Nomads_View {
 
 	public function __construct() {
-
-		
+		parent::__construct();
 	}
 
 	public function index() {
-
 		
 	}
 }

@@ -7,15 +7,13 @@
  *
  **/
 
-class ClassName extends AnotherClass {
+class Welcome_Controller extends Nomads_Controller {
 
 	public function __construct() {
-
-		
+		parent::__construct();
 	}
 
 	public function index() {
-
 		
 	}
 }
