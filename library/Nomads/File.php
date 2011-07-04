@@ -21,16 +21,14 @@ class Nomads_File {
 		return basename($this->path);
 	}
 		
-	public function getNameWithoutExtension($extensionLevel=0) {
-		if (preg_match_all("/\.([^\.]+)/",$this->getName(),$match)) {
-			for ($i=0; $i<$extensionLevel;$i++) {
-				array_shift($match[0]);
-			}
-			//echo $this->getName()."\n";
-			//echo implode('',$match[0])."\n";
-			return substr($this->getName(),0,-1*strlen(implode('',$match[0])));
+	public function getNameWithoutExtension($extensionLevel=1) {
+	
+		$items = explode('.', $this->getName());
+		for ($i=0; $i<$extensionLevel;$i++) {
+			array_pop($items);
 		}
-		return false;
+		
+		return implode('.', $items);
 	}
 	
 	public function getExtension($extensionLevel=0) {
