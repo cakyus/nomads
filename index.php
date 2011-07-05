@@ -14,6 +14,12 @@ define('FRAMEWORK_PATH', __DIR__);
 define('FRAMEWORK_LIBRARY_PATH', FRAMEWORK_PATH.'/library');
 define('FRAMEWORK_APPLICATION_PATH', FRAMEWORK_PATH.'/application');
 
+// overwrite configuration with config.php, if exits
+// config.php is included in .gitignore
+if (is_file(FRAMEWORK_PATH.'/config.php')) {
+	include(FRAMEWORK_PATH.'/config.php');
+}
+
 // loader
 function __autoload($className) {
 
