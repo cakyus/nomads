@@ -15,8 +15,42 @@ define('FRAMEWORK_LIBRARY_PATH', FRAMEWORK_PATH.'/library');
 define('FRAMEWORK_APPLICATION_PATH', FRAMEWORK_PATH.'/application');
 
 // loader
-function __autoload($class) {
+function __autoload($className) {
+	
+	// application Controller and View
+	if (preg_match("/^([^_]+)(.+)*_(Controller|View)$/", $className, $match)) {
 
+		$namespaceName = $match[1];
+		$classChildName = $match[2];
+		$classTypeName = $match[3];
+		
+		if (empty($classChildName)) {
+			$classPath = FRAMEWORK_APPLICATION_PATH
+				.'/'.strtolower($namespaceName)
+				.'/'.strtolower($classTypeName)
+				.'/'.$classTypeName.'.php'
+				;
+		}
+	}
+	
+	if (is_file($classPath)) {
+		require_once($classPath);
+		return true;
+	}
+	
+	// library
+	$classPath = FRAMEWORK_LIBRARY_PATH
+		.'/'.str_replace('_', '/', $className)
+		.'.php'
+		;
+	
+	if (is_file($classPath)) {
+		require_once($classPath);
+		return true;
+	}
+	
+	trigger_error("Unable to load class $className");
+	return false;
 }
 
 // error handler
@@ -24,7 +58,6 @@ function __autoload($class) {
 
 // debugging
 function d($var) {
-	// @todo show file and line number which call this function
 	ob_clean();
 	header('Content-type: text/plain');
 	$debug = debug_backtrace();
@@ -35,7 +68,84 @@ function d($var) {
 	var_dump($var); exit();
 }
 
-// request handler
-d('ok');
+// error handler
+function my_error_handler($errno, $errstr, $errfile, $errline) {
 
+    if (!(error_reporting() & $errno)) {
+        // This error code is not included in error_reporting
+        return;
+    }
+
+	ob_clean();
+	header('Content-type: text/plain');
+    
+    switch ($errno) {
+    case E_USER_ERROR:
+        echo "<b>My ERROR</b> [$errno] $errstr<br />\n";
+        echo "  Fatal error on line $errline in file $errfile";
+        echo ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
+        echo "Aborting...<br />\n";
+        exit(1);
+        break;
+
+    case E_USER_WARNING:
+        echo "<b>My WARNING</b> [$errno] $errstr<br />\n";
+        break;
+
+    case E_USER_NOTICE:
+        echo "$errno E_USER_NOTICE $errfile on line $errline"
+        	."\n\n$errstr"
+        	;
+        break;
+
+    default:
+        echo "Unknown error type: [$errno] $errstr<br />\n";
+        break;
+    }
+    
+
+    return true;
+}
+
+// set to the user defined error handler
+$old_error_handler = set_error_handler("my_error_handler");
+
+// request handler
+if (isset($_REQUEST['p'])) {
+	$path = $_REQUEST['p'];
+} else {
+	$path = '/';
+}
+
+$item = explode('/', $path);
+
+//		class
+if (empty($item[1])) {
+	$class = 'Welcome';
+} else {
+	$class = ucfirst($item[1]);
+}
+
+//		function
+if (empty($item[2])) {
+	$function = 'index';
+} else {
+	$function = $item[2];
+}
+
+// 		arguments
+if (empty($item[3])) {
+	$arguments = array();	
+} else {
+	$arguments = array_slice($item, 3);
+}
+
+$class .= '_Controller';
+
+#echo 'class: '.$class
+#	.'<br />function: '.$function
+#	.'<br />arguments: '.implode(',', $arguments)
+#	;
+
+call_user_func_array(array($class, $function), $arguments);
 
