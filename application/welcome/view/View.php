@@ -14,7 +14,7 @@ class Welcome_View extends Nomads_View {
 	}
 
 	public function index() {
-		
+		echo 'It\'s works !';
 	}
 }
 

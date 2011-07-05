@@ -14,7 +14,8 @@ class Welcome_Controller extends Nomads_Controller {
 	}
 
 	public function index() {
-		
+		$view = new Welcome_View;
+		$view->index();
 	}
 }
 
