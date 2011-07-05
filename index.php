@@ -31,7 +31,7 @@ function __autoload($className) {
 	if (preg_match("/^([^_]+)(.+)*_(Controller|View)$/", $className, $match)) {
 
 		$namespaceName = $match[1];
-		$classChildName = $match[2];
+		$classChildName = str_replace('_', '/', $match[2]);
 		$classTypeName = $match[3];
 		
 		if (empty($classChildName)) {
@@ -41,6 +41,16 @@ function __autoload($className) {
 				.'/'.$classTypeName.'.php'
 				;
 		}
+	} elseif (preg_match("/^([^_]+)_(.+)+$/", $className, $match)) {
+		
+		$namespaceName = $match[1];
+		$classChildName = str_replace('_', '/', $match[2]);
+		
+		$classPath = $config['Framework']['applicationPath']
+			.'/'.strtolower($namespaceName)
+			.'/model'
+			.'/'.$classChildName.'.php'
+			;
 	}
 	
 	if (is_file($classPath)) {
