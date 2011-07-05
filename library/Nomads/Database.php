@@ -5,13 +5,13 @@ class Nomads_Database {
 	private $handle;
 	
     public function __construct() {
-    
-    	$config = new Nomads_Config;
     	
-    	$hostname = $config->get('Nomads_Database_Hostname');
-    	$username = $config->get('Nomads_Database_Username');
-    	$password = $config->get('Nomads_Database_Password');
-    	$database = $config->get('Nomads_Database_Database');
+    	$config = new Nomads_Database_Config;
+    	
+    	$hostname = $config->hostname;
+    	$username = $config->username;
+    	$password = $config->password;
+    	$database = $config->database;
     	
 		if ($handle = mysql_connect($hostname, $username, $password)) {
 			// it's okay

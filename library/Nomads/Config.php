@@ -2,13 +2,10 @@
 
 class Nomads_Config {
 
-    private $properties;
-
     public function __construct () {
     
         $file = new Nomads_File;
         
-        $this->properties = array();
         $fileConfig = FRAMEWORK_PATH.'/config.php';
         
         if ($file->open($fileConfig)) {
@@ -16,15 +13,18 @@ class Nomads_Config {
             // @todo this include is called multiple times
             //  perhaps Singleton will be better
             include($fileConfig);
-            $this->properties = $config;
-        }
-    }
-    
-    public function get($keyword) {
-       if (isset($this->properties[$keyword])) {
-            return $this->properties[$keyword];
-        } else {
-            return null;
+            
+            if (isset($config[get_class($this)])) {
+            	$configClass = $config[get_class($this)];
+            } else {
+            	return false;
+            }
+            
+            foreach ($this as $key => $value) {
+            	if (isset($configClass[$key])) {
+            		$this->$key = $configClass[$key];
+            	}
+            }
         }
     }
 }
