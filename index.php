@@ -133,14 +133,14 @@ $item = explode('/', $path);
 
 //		class
 if (empty($item[1])) {
-	$class = 'Welcome';
+	$class = $config['Framework']['controllerDefault'];
 } else {
 	$class = ucfirst($item[1]);
 }
 
 //		function
 if (empty($item[2])) {
-	$function = 'index';
+	$function = $config['Framework']['functionDefault'];
 } else {
 	$function = $item[2];
 }
