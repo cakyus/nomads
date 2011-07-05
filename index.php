@@ -16,6 +16,8 @@ define('FRAMEWORK_APPLICATION_PATH', FRAMEWORK_PATH.'/application');
 
 // loader
 function __autoload($className) {
+
+	$classPath = '';
 	
 	// application Controller and View
 	if (preg_match("/^([^_]+)(.+)*_(Controller|View)$/", $className, $match)) {
@@ -99,7 +101,9 @@ function my_error_handler($errno, $errstr, $errfile, $errline) {
         break;
 
     default:
-        echo "Unknown error type: [$errno] $errstr<br />\n";
+        echo "$errno UNKNOWN $errfile on line $errline"
+        	."\n\n$errstr"
+        	;
         break;
     }
     
