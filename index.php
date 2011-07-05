@@ -7,22 +7,24 @@ error_reporting(E_ALL);
 ob_start();
 
 // configuration
-define('FRAMEWORK_CONTROLLER_DEFAULT', 'Welcome');
-define('FRAMEWORK_FUNCTION_DEFAULT', 'index');
+$config['Framework']['controllerDefault'] = 'Welcome';
+$config['Framework']['functionDefault'] = 'index';
 
-define('FRAMEWORK_PATH', __DIR__);
-define('FRAMEWORK_LIBRARY_PATH', FRAMEWORK_PATH.'/library');
-define('FRAMEWORK_APPLICATION_PATH', FRAMEWORK_PATH.'/application');
+$config['Framework']['path'] = __DIR__;
+$config['Framework']['libraryPath'] = $config['Framework']['path'].'/library';
+$config['Framework']['applicationPath'] = $config['Framework']['path'].'/application';
 
 // overwrite configuration with config.php, if exits
 // config.php is included in .gitignore
-if (is_file(FRAMEWORK_PATH.'/config.php')) {
-	include(FRAMEWORK_PATH.'/config.php');
+if (is_file($config['Framework']['path'].'/config.php')) {
+	include($config['Framework']['path'].'/config.php');
 }
 
 // loader
 function __autoload($className) {
-
+	
+	global $config;
+	
 	$classPath = '';
 	
 	// application Controller and View
@@ -33,7 +35,7 @@ function __autoload($className) {
 		$classTypeName = $match[3];
 		
 		if (empty($classChildName)) {
-			$classPath = FRAMEWORK_APPLICATION_PATH
+			$classPath = $config['Framework']['applicationPath']
 				.'/'.strtolower($namespaceName)
 				.'/'.strtolower($classTypeName)
 				.'/'.$classTypeName.'.php'
@@ -47,7 +49,7 @@ function __autoload($className) {
 	}
 	
 	// library
-	$classPath = FRAMEWORK_LIBRARY_PATH
+	$classPath = $config['Framework']['libraryPath']
 		.'/'.str_replace('_', '/', $className)
 		.'.php'
 		;
