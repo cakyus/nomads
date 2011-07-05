@@ -40,6 +40,12 @@ function __autoload($className) {
 				.'/'.strtolower($classTypeName)
 				.'/'.$classTypeName.'.php'
 				;
+		} else {
+			$classPath = $config['Framework']['applicationPath']
+				.'/'.strtolower($namespaceName)
+				.'/'.strtolower($classTypeName)
+				.$classChildName.'.php'
+				;
 		}
 	} elseif (preg_match("/^([^_]+)_(.+)+$/", $className, $match)) {
 		
@@ -52,7 +58,7 @@ function __autoload($className) {
 			.'/'.$classChildName.'.php'
 			;
 	}
-	
+		
 	if (is_file($classPath)) {
 		require_once($classPath);
 		return true;
