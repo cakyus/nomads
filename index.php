@@ -98,6 +98,19 @@ function my_error_handler($errno, $errstr, $errfile, $errline) {
 // set to the user defined error handler
 $old_error_handler = set_error_handler("my_error_handler");
 
+/**
+	Resolving URL
+	Syntax: /<namespace>/<class>/<function>/<arguments>
+	Example:
+		No	URL							Class
+		1	?p=						-> 	Welcome_Controller->index()
+		2	?p=welcome				-> 	Welcome_Controller->index()
+		3	?p=welcome/page			-> 	Welcome_Page_Controller->index()
+		4	?p=welcome/page/item	-> 	Welcome_Page_Controller->item()
+		5	?p=welcome/page/item/1	-> 	Welcome_Page_Controller->item(1)
+	
+**/
+
 // request handler
 if (isset($_REQUEST['p'])) {
 	$path = $_REQUEST['p'];
@@ -107,32 +120,36 @@ if (isset($_REQUEST['p'])) {
 
 $item = explode('/', $path);
 
-//		class
-if (empty($item[1])) {
+if (count($item) == 1 && empty($item[0])) {
 	$class = $config['Framework']['controllerDefault'];
-} else {
-	$class = ucfirst($item[1]);
-}
-
-//		function
-if (empty($item[2])) {
 	$function = $config['Framework']['functionDefault'];
-} else {
+	$arguments = array();
+} elseif (count($item) == 1) {
+	$class = ucwords($item[0]);
+	$function = $config['Framework']['functionDefault'];
+	$arguments = array();
+} elseif (count($item) == 2) {
+	$class = ucwords($item[0]).'_'.ucwords($item[1]);
+	$function = $config['Framework']['functionDefault'];
+	$arguments = array();
+} elseif (count($item) == 3) {
+	$class = ucwords($item[0]).'_'.ucwords($item[1]);
 	$function = $item[2];
-}
-
-// 		arguments
-if (empty($item[3])) {
-	$arguments = array();	
+	$arguments = array();
 } else {
+	$class = ucwords($item[0]).'_'.ucwords($item[1]);
+	$function = $item[2];
 	$arguments = array_slice($item, 3);
 }
 
 $class .= '_Controller';
 
-#echo 'class: '.$class
+#echo 'count: '.count($item)
+#	.'<br />items: '.implode(', ', $item)
+#	.'<br />class: '.$class
 #	.'<br />function: '.$function
 #	.'<br />arguments: '.implode(',', $arguments)
+#	.'<br />'
 #	;
 
 call_user_func_array(array($class, $function), $arguments);
