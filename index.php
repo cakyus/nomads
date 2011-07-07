@@ -12,7 +12,6 @@ $config['Framework']['functionDefault'] = 'index';
 
 $config['Framework']['path'] = __DIR__;
 $config['Framework']['libraryPath'] = $config['Framework']['path'].'/library';
-$config['Framework']['applicationPath'] = $config['Framework']['path'].'/application';
 
 // overwrite configuration with config.php, if exits
 // config.php is included in .gitignore
@@ -24,45 +23,6 @@ if (is_file($config['Framework']['path'].'/config.php')) {
 function __autoload($className) {
 	
 	global $config;
-	
-	$classPath = '';
-	
-	// application Controller and View
-	if (preg_match("/^([^_]+)(.+)*_(Controller|View)$/", $className, $match)) {
-
-		$namespaceName = $match[1];
-		$classChildName = str_replace('_', '/', $match[2]);
-		$classTypeName = $match[3];
-		
-		if (empty($classChildName)) {
-			$classPath = $config['Framework']['applicationPath']
-				.'/'.strtolower($namespaceName)
-				.'/'.strtolower($classTypeName)
-				.'/'.$classTypeName.'.php'
-				;
-		} else {
-			$classPath = $config['Framework']['applicationPath']
-				.'/'.strtolower($namespaceName)
-				.'/'.strtolower($classTypeName)
-				.$classChildName.'.php'
-				;
-		}
-	} elseif (preg_match("/^([^_]+)_(.+)+$/", $className, $match)) {
-		
-		$namespaceName = $match[1];
-		$classChildName = str_replace('_', '/', $match[2]);
-		
-		$classPath = $config['Framework']['applicationPath']
-			.'/'.strtolower($namespaceName)
-			.'/model'
-			.'/'.$classChildName.'.php'
-			;
-	}
-		
-	if (is_file($classPath)) {
-		require_once($classPath);
-		return true;
-	}
 	
 	// library
 	$classPath = $config['Framework']['libraryPath']
