@@ -115,7 +115,7 @@ $old_error_handler = set_error_handler("my_error_handler");
 if (isset($_REQUEST['p'])) {
 	$path = $_REQUEST['p'];
 } else {
-	$path = '/';
+	$path = '';
 }
 
 $item = explode('/', $path);
