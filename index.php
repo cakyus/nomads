@@ -7,41 +7,65 @@ error_reporting(E_ALL);
 ob_start();
 
 // configuration
-define('FRAMEWORK_CONTROLLER_DEFAULT', 'Welcome');
-define('FRAMEWORK_FUNCTION_DEFAULT', 'index');
+$config['Framework']['controllerDefault'] = 'Welcome';
+$config['Framework']['functionDefault'] = 'index';
 
-define('FRAMEWORK_PATH', __DIR__);
-define('FRAMEWORK_LIBRARY_PATH', FRAMEWORK_PATH.'/library');
-define('FRAMEWORK_APPLICATION_PATH', FRAMEWORK_PATH.'/application');
+$config['Framework']['path'] = __DIR__;
+$config['Framework']['libraryPath'] = $config['Framework']['path'].'/library';
+$config['Framework']['applicationPath'] = $config['Framework']['path'].'/application';
+
+// overwrite configuration with config.php, if exits
+// config.php is included in .gitignore
+if (is_file($config['Framework']['path'].'/config.php')) {
+	include($config['Framework']['path'].'/config.php');
+}
 
 // loader
 function __autoload($className) {
-
+	
+	global $config;
+	
 	$classPath = '';
 	
 	// application Controller and View
 	if (preg_match("/^([^_]+)(.+)*_(Controller|View)$/", $className, $match)) {
 
 		$namespaceName = $match[1];
-		$classChildName = $match[2];
+		$classChildName = str_replace('_', '/', $match[2]);
 		$classTypeName = $match[3];
 		
 		if (empty($classChildName)) {
-			$classPath = FRAMEWORK_APPLICATION_PATH
+			$classPath = $config['Framework']['applicationPath']
 				.'/'.strtolower($namespaceName)
 				.'/'.strtolower($classTypeName)
 				.'/'.$classTypeName.'.php'
 				;
+		} else {
+			$classPath = $config['Framework']['applicationPath']
+				.'/'.strtolower($namespaceName)
+				.'/'.strtolower($classTypeName)
+				.$classChildName.'.php'
+				;
 		}
+	} elseif (preg_match("/^([^_]+)_(.+)+$/", $className, $match)) {
+		
+		$namespaceName = $match[1];
+		$classChildName = str_replace('_', '/', $match[2]);
+		
+		$classPath = $config['Framework']['applicationPath']
+			.'/'.strtolower($namespaceName)
+			.'/model'
+			.'/'.$classChildName.'.php'
+			;
 	}
-	
+		
 	if (is_file($classPath)) {
 		require_once($classPath);
 		return true;
 	}
 	
 	// library
-	$classPath = FRAMEWORK_LIBRARY_PATH
+	$classPath = $config['Framework']['libraryPath']
 		.'/'.str_replace('_', '/', $className)
 		.'.php'
 		;
@@ -125,14 +149,14 @@ $item = explode('/', $path);
 
 //		class
 if (empty($item[1])) {
-	$class = 'Welcome';
+	$class = $config['Framework']['controllerDefault'];
 } else {
 	$class = ucfirst($item[1]);
 }
 
 //		function
 if (empty($item[2])) {
-	$function = 'index';
+	$function = $config['Framework']['functionDefault'];
 } else {
 	$function = $item[2];
 }
