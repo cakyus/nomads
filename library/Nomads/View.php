@@ -7,7 +7,6 @@
 class Nomads_View {
 
 	private $title;
-	private $pageTitle;
 	private $content;
 	private $styles;
 	private $scripts;
@@ -19,10 +18,6 @@ class Nomads_View {
 
 	public function setTitle($title) {
 		$this->title = $title;
-	}
-	
-	public function setPageTitle($pageTitle) {
-		$this->pageTitle = $pageTitle;
 	}
 	
 	public function addStyle($URL) {
@@ -44,7 +39,8 @@ class Nomads_View {
 		echo '<html><head>';
 		echo '<title>'.$this->title.'</title>';
 		
-		$storageURL = $config->get('Nomads_Storage_URL');
+		//$storageURL = $config->get('Nomads_Storage_URL');
+		$storageURL = '';
 		
 		// styles
 		foreach ($this->styles as $style) {
