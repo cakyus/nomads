@@ -20,8 +20,17 @@ class Nomads_View {
 		$this->title = $title;
 	}
 	
-	public function addStyle($URL) {
-	    $this->styles[] = $URL;
+	public function addStyle($filePath) {
+	
+		$storage = new Nomads_Storage;
+		
+		$className = get_class($this);
+		$libraryName = substr($className, 0, strpos($className, '_'));
+		$filePath = $libraryName.'/'.$filePath;
+		
+		if ($storage->open($filePath)) {
+		    $this->styles[] = $storage->getURL();
+		}
 	}
 
 	public function addScript($URL) {
@@ -38,14 +47,11 @@ class Nomads_View {
 		
 		echo '<html><head>';
 		echo '<title>'.$this->title.'</title>';
-		
-		//$storageURL = $config->get('Nomads_Storage_URL');
-		$storageURL = '';
-		
+				
 		// styles
 		foreach ($this->styles as $style) {
 		    echo '<link rel="stylesheet" type="text/css"'
-		    	.' href="'.$storageURL.'/'.$style.'"'
+		    	.' href="'.$style.'"'
 		    	.' />';    
         }
 		// scripts
