@@ -4,6 +4,8 @@ class Nomads_File {
 	
 	private $path;
 	
+	public function __construct() {}
+	
 	public function open($path) {
 		$this->path = $path;
 		return is_file($path);
