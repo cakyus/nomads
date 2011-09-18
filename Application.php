@@ -16,15 +16,7 @@ class Nomads_Application {
 		include('Loader.php');
 		Nomads_Loader::setAutoload();
 
-		// find controller
-		// probably useful variables:
-		// $_SERVER['SCRIPT_NAME'], $_SERVER['REQUEST_URI']
-		$path = substr($_SERVER['REQUEST_URI']
-			, strlen(dirname($_SERVER['SCRIPT_NAME']))
-			);
-		// /projects/nomads/application/public/index.php
-		echo $path;
-		// echo $this->path;
-		phpinfo(32);
+		$controller = new Index_Controller;
+		$controller->index();
 	}
 }
