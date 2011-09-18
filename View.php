@@ -12,15 +12,15 @@ class Nomads_View {
 	    $this->properties = array();
 	}
 	
-	public function assign($keyword, $value) {
+	public function set($keyword, $value) {
 		$this->properties[$keyword] = $value;
 	}
 	
-	public function render($file) {
+	public function show($file) {
 		include(APPLICATION_PATH.'/view/'.$file);
 	}
 	
-	public function __get($keyword) {
+	public function get($keyword) {
 		if (isset($this->properties[$keyword])) {
 			return $this->properties[$keyword];
 		}
