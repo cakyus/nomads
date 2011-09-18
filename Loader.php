@@ -2,6 +2,7 @@
 
 class Nomads_Loader {
 	
+	
 	public static function setAutoload() {
 		return spl_autoload_register(array(__CLASS__, 'loadClass'));	
 	}
@@ -16,7 +17,19 @@ class Nomads_Loader {
 			$file = $dir.'/'.$path;
 			if (file_exists($file)) {
 				require_once($file);
-				break;
+				return true;
+			}
+		}
+		
+		// controller
+		if (substr($class, -11) == '_Controller') {
+			$file = APPLICATION_PATH.'/controller/'
+				.str_replace('_','/',substr($class,0,-11))
+				.'.php'
+				;
+			if (file_exists($file)) {
+				require_once($file);
+				return true;
 			}
 		}
 	}
