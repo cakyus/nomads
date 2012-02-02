@@ -2,6 +2,10 @@
 
 class Nomads_Controller {
 	
-	public function __construct () {}
+	public $name;
+	
+	public function __construct () {
+		
+	}
 }
 

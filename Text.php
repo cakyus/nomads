@@ -42,16 +42,6 @@ class Nomads_Text {
 		);
 	}
 	
-    // generate unique id
-    // use only in a server
-	 
-	public function getUniqId() {
-	
-		trigger_error('depreciated', E_USER_DEPRECATED);
-		
-		return str_replace(array("{", "-", "}"), "", com_create_guid());
-	}
-	
 	public function formatByte($Number) {
 	
 		$Unit = array(' B', 'KB', 'MB', 'GB', 'TB');

@@ -58,7 +58,12 @@ class Nomads_File {
 	}
 	
 	public function getContent() {
-	    return file_get_contents($this->path);
+		if ($content = file_get_contents($this->path)) {
+			return $content;
+		} else {
+			throw new Exception('Can\'t get file content');
+			return false;
+		}
 	}
 	
 	public function getURL() {
@@ -66,6 +71,14 @@ class Nomads_File {
     	        == $_SERVER['DOCUMENT_ROOT']) {
             return substr($this->path,strlen($_SERVER['DOCUMENT_ROOT']));
         }
+	}
+	
+	public function getTimeCreate() {
+		return filectime($this->path);
+	}
+	
+	public function putContent($content) {
+		return file_put_contents($this->path, $content);
 	}
 }
 

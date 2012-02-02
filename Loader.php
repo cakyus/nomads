@@ -2,14 +2,16 @@
 
 class Nomads_Loader {
 	
-	
-	public static function setAutoload() {
-		return spl_autoload_register(array(__CLASS__, 'loadClass'));	
-	}
-	
 	public static function register() {
-		// add current folder in included path
-		self::addIncludePath(dirname(__DIR__));
+		
+		/**
+		 * /path/to/library/Nomads/
+		 * /path/to/library/Zend/
+		 **/
+		
+		$libraryDirPath = dirname(dirname(__FILE__));
+		self::addIncludePath($libraryDirPath);
+		
 		return spl_autoload_register(array(__CLASS__, 'loadClass'));	
 	}
 
@@ -28,10 +30,15 @@ class Nomads_Loader {
 		
 		foreach ($dirs as $dir) {
 			$file = $dir.'/'.$path;
+//			echo $file."\n";
 			if (file_exists($file)) {
 				require_once($file);
 				return true;
 			}
+		}
+		
+		if (defined('APPLICATION_PATH') == false) {
+			return false;
 		}
 		
 		// controller
@@ -55,13 +62,5 @@ class Nomads_Loader {
 			require_once($file);
 			return true;
 		}
-		
-		// class already exists
-		if (in_array($class, get_declared_classes())) {
-			return true;
-		}
-		
-		// fail
-		trigger_error('Can\'t resolve class "'.$class.'"');
 	}
 }
