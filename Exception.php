@@ -8,11 +8,22 @@ class Nomads_Exception extends Exception {
     
         // make sure everything is assigned properly
         parent::__construct($message, $code, $previous);
+        echo $this->__toString();
     }
 
     // custom string representation of object
     public function __toString() {
-        return __CLASS__ . " {$this->message}\n";
+        return "<html>
+	<head>
+		<title>Error</title>
+	</head>
+	<body>
+		<h1>Error</h1>
+		{$this->file} ({$this->line}): {$this->message}
+		<pre>{$this->getTraceAsString()}</pre>
+	</body>
+</html>
+";
     }
 }
 
